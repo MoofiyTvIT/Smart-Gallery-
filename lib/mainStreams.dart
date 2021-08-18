@@ -309,8 +309,14 @@ class _ImageScreenState extends State<ImageScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            print("presing");
-            recogniseText();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ExtractText(
+                  imageActualFile: imageActualFile,
+                ),
+              ),
+            );
           },
           label: Text('إستخراج النص')),
       body: Stack(
@@ -326,7 +332,9 @@ class _ImageScreenState extends State<ImageScreen> {
                       builder: (_, snapshot) {
                         final file = snapshot.data;
                         if (file == null) return Text("Error Loading Image");
-                        setState(() { imageActualFile = file;});
+                        setState(() {
+                          imageActualFile = file;
+                        });
                         return CircularProgressIndicator();
                       },
                     )),
@@ -342,45 +350,33 @@ class _ImageScreenState extends State<ImageScreen> {
         initialChildSize: 0.25,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
-            color: Colors.black26,
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: widget.imgLabels.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  subtitle: Text(
-                    ' ${widget.imgLabels[index].label}  ${(widget.imgLabels[index].confidence * 100).truncate()}%',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+              color: Colors.black26,
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: widget.imgLabels.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    subtitle: Text(
+                      ' ${widget.imgLabels[index].label}  ${(widget.imgLabels[index].confidence * 100).truncate()}%',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    '${widget.translateLabel[index].translatedLabel}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                    title: Text(
+                      '${widget.translateLabel[index].translatedLabel}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
           );
         },
       ),
     );
-  }
-
-  recogniseText() async {
-    print("processting text");
-    TextDetector textDetector = GoogleMlKit.vision.textDetector();
-    InputImage inputImage = InputImage.fromFile(imageActualFile!);
-    final recognisedText = await textDetector.processImage(inputImage);
-    for (final textBlock in recognisedText.blocks) {
-      if(!textBlock.recognizedLanguages.contains("un"))
-      print(' text : ${  textBlock.text } ');
-
-    }
   }
 
   Future<List<ImageLabel>> processImage({required Future<File?> file}) async {
@@ -393,5 +389,65 @@ class _ImageScreenState extends State<ImageScreen> {
 
   void createImage() async {
     await imageFile.then((value) => imageActualFile = value);
+  }
+}
+
+class ExtractText extends StatelessWidget {
+  final File? imageActualFile;
+
+  ExtractText({Key? key, this.imageActualFile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: FutureBuilder(
+        // Initialize FlutterFire:
+        future: recogniseText(imageActualFile),
+        builder: (context, snapshot) {
+          // Check for errors
+          if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            List<TextBlock> extractedTexts = snapshot.data as List<TextBlock>;
+            return ListView.builder(
+                itemCount: extractedTexts.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    subtitle: Text(
+                      ' ${extractedTexts[index].recognizedLanguages}',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    title: Text(
+                      ' ${extractedTexts[index].text}',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.copy),
+                      onPressed: () {},
+                    ),
+                  );
+                });
+          }
+
+          // Otherwise, show something whilst waiting for initialization to complete
+          return CircularProgressIndicator();
+        },
+      ),
+    );
+  }
+
+  Future<List<TextBlock>> recogniseText(File? imageActualFile) async {
+    TextDetector textDetector = GoogleMlKit.vision.textDetector();
+    InputImage inputImage = InputImage.fromFile(imageActualFile!);
+    final recognisedText = await textDetector.processImage(inputImage);
+    return recognisedText.blocks
+        .where((element) => !element.recognizedLanguages.contains("und"))
+        .toList();
   }
 }
