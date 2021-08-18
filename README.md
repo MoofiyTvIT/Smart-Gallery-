@@ -1,4 +1,4 @@
-#Smart Gallery
+# Smart Gallery
 # Description
 itd an app to search your images in Arabic 
 itd an app to search your images in Arabic 
@@ -8,32 +8,32 @@ itd an app to search your images in Arabic
 itd an app to search your images in Arabic 
 itd an app to search your images in Arabic 
 
-#Screenshots
+# Screenshots
 ![screenshot1](https://github.com/MoofiyTvIT/Smart-Gallery-/blob/main/screenshots/1.jpeg?raw=true)
 ![screenshot2](https://github.com/MoofiyTvIT/Smart-Gallery-/blob/main/screenshots/2.jpeg?raw=true)
 ![screenshot3](https://github.com/MoofiyTvIT/Smart-Gallery-/blob/main/screenshots/3.jpeg?raw=true)
 ![screenshot3](https://github.com/MoofiyTvIT/Smart-Gallery-/blob/main/screenshots/4.jpeg?raw=true)
 
-#How to use 
+# How to use 
 download tha app from [Playstore](http://example.com)
 download tha app from [App store](http://example.com)
 
-#Motivation
+# Motivation
 im creating this app as a demo for a course on Flutter and direct application 
 on AI especially cv
 
-#Installation 
+# Installation 
 install android studio and then run the app from 
 `flutter --run app`
 
-#Frameworks or technology 
+# Frameworks or technology 
 Flutter
-#Features 
+# Features 
 - image labeling
 - translation
 - extract text
 - search images
-#Code example
+# Code example
 ```
 /**
      * Sorts the specified array into ascending numerical order.
