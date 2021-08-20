@@ -1,12 +1,7 @@
 # Smart Gallery
 # Description
-itd an app to search your images in Arabic 
-itd an app to search your images in Arabic 
-itd an app to search your images in Arabic 
-itd an app to search your images in Arabic 
-itd an app to search your images in Arabic 
-itd an app to search your images in Arabic 
-itd an app to search your images in Arabic 
+it's an app to search with in your images in Arabic 
+
 
 # Screenshots
 ![screenshot1](https://github.com/MoofiyTvIT/Smart-Gallery-/blob/main/screenshots/1.jpeg?raw=true)
